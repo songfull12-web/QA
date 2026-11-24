@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>제품 인증번호 조회</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mu:#6b7385;--bd:#e3e6ec;--ac:#3b5bdb;--ac2:#e8edff;--no:#c0c5d0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14171d;--card:#1d2129;--tx:#e8eaf0;--mu:#9aa2b4;--bd:#2d333f;--ac:#8fa6ff;--ac2:#262d45;--no:#4a5163;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+header{padding:20px 16px 8px;max-width:1200px;margin:auto}h1{margin:0;font-size:20px}p.s{margin:4px 0 0;color:var(--mu);font-size:12px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 16px;max-width:1200px;margin:auto;display:flex;gap:8px;flex-wrap:wrap}
+input,select{font:inherit;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+input{flex:1;min-width:180px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px 40px}
+.box{overflow-x:auto;background:var(--card);border:1px solid var(--bd);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:1300px}
+th{position:sticky;top:0;background:var(--card);text-align:left;font-size:12px;color:var(--mu);padding:9px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.n{font-weight:600}.m{font-size:11px;color:var(--mu)}
+.c{font:12px ui-monospace,Menlo,monospace;cursor:pointer;white-space:nowrap}.c:hover{background:var(--ac2);color:var(--ac)}
+.no{color:var(--no)}.cnt{color:var(--mu);font-size:12px;padding:4px 2px 8px}
+#t{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 14px;border-radius:20px;font-size:12px;opacity:0;transition:.2s;pointer-events:none}
+button{font:inherit;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);cursor:pointer}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}button.d{color:#d9480f}
+.e{padding:2px 8px;font-size:12px}#bn:not(:empty){background:var(--ac2);border-radius:8px;padding:10px 12px;margin:6px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+dialog{border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);width:min(420px,92vw)}dialog::backdrop{background:#0006}
+dialog label{display:block;font-size:12px;color:var(--mu);margin-top:8px}dialog input{width:100%;margin-top:2px;color:var(--tx)}.ac{display:flex;gap:8px;margin-top:14px}
+.fr{display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}.fn{flex:1;word-break:break-all}
+.e.on{background:var(--ac2);color:var(--ac);border-color:var(--ac)}td .e{white-space:nowrap}.tg{display:inline-block;font-size:10px;padding:1px 6px;border-radius:9px;margin:1px 2px 1px 0;background:var(--ac2);color:var(--ac)}.tg.off{background:transparent;color:var(--no);border:1px solid var(--bd)}dialog select{width:100%;margin-top:2px;color:var(--tx)}
+</style></head><body>
+<header><h1>제품 인증번호 조회</h1><p class="s">MoCRA(미국) · CPNP(EU) · SCPN(영국) · 번호를 누르면 복사됩니다 · 제품은 직접 추가·수정하거나 엑셀/CSV로 올릴 수 있어요</p><p class="s" id="md"></p></header>
+<div class="wrap"><nav style="display:flex;gap:6px;margin:4px 0"><button class="p" data-t="p">제품 인증번호</button><button data-t="m">제조사 주소 (GMP)</button><button data-t="r">RP 정보</button></nav></div>
+<div class="bar"><input id="q" type="search" placeholder="제품명, 제조사, 바코드, 인증번호 검색"><select id="f"></select><select id="g"><option value="">전체</option><option value="x">EU 미등록</option><option value="u">영국 미등록</option><option value="m">미국 미등록</option><option value="a_MSDS">MSDS 파일 없음</option><option value="a_아트웍">아트웍 파일 없음</option><option value="a_CPNP">CPNP 파일 없음</option><option value="a_SCPN">SCPN 파일 없음</option><option value="a_MoCRA">MoCRA 파일 없음</option><option value="a_CPSR">CPSR(EU) 파일 없음</option><option value="a_US SSR">US SSR 파일 없음</option><option value="rp_트레이드">RP: 트레이드</option><option value="rp_네모">RP: 네모</option><option value="rp_YJN">RP: YJN</option><option value="rp_CDRI">RP: CDRI</option></select><button id="add" class="p">＋ 제품 추가</button><button id="up">⬆ 엑셀/CSV 업로드</button><button id="cg">⚙ 저장 설정</button><input type="file" id="file" accept=".csv,.xlsx,.xls" hidden></div>
+<div class="wrap"><div id="bn"></div></div>
+<div class="wrap"><div class="cnt" id="cnt"></div><div class="box"><table><thead><tr><th>제품명</th><th>제조사</th><th>RP (책임자)</th><th>바코드</th><th>MoCRA 확인서</th><th>CPNP</th><th>SCPN</th><th>MSDS</th><th>아트웍</th><th>CPSR (EU)</th><th>US Safety Substantiation Report</th><th></th></tr></thead><tbody id="b"></tbody></table></div></div>
+<div class="wrap" id="mv" style="display:none"><p class="s" style="margin:4px 0 10px">GMP 증명서 기준 공장 주소 · 주소를 누르면 복사됩니다 · '검수 필요'는 확인 후 알려주세요</p><div class="box"><table style="min-width:760px"><thead><tr><th>제조사</th><th>공장 주소 (영문)</th><th>GMP 발행일</th><th>상태</th><th>GMP 인증서</th><th>ISO22716</th></tr></thead><tbody id="mb"></tbody></table></div></div>
+<div class="wrap" id="rv" style="display:none"><p class="s" style="margin:4px 0 10px">RP(Responsible Person) 정보 · 제품별 RP는 CPNP 등록제품 시트의 '기준 Rp'를 따랐어요 · 주소를 누르면 복사됩니다</p><div class="box"><table style="min-width:900px"><thead><tr><th>RP</th><th>EU RP</th><th>UK RP</th><th>연락처</th><th>담당 제품</th><th>비고</th></tr></thead><tbody id="rb"></tbody></table></div></div>
+<dialog id="fd"><h3 id="ft" style="margin:0 0 8px">첨부파일</h3><div id="fl2"></div>
+<label>파일 추가 (여러 개 가능 · 파일당 25MB 이하)<input type="file" id="fi" multiple></label>
+<div class="m" style="margin-top:10px">또는 링크·경로 추가 (드라이브 링크, Z:\QC\… 등)</div><div style="display:flex;gap:6px;margin-top:2px"><input id="lk" placeholder="https://… 또는 Z:\QC\…"><button id="lb">추가</button></div>
+<div class="ac"><span style="flex:1"></span><button id="fx">닫기</button></div></dialog>
+<dialog id="cfg"><h3 style="margin:0 0 6px">저장 설정 (구글 시트 연결)</h3><p class="m" style="margin:0">비워두면 이 브라우저에만 저장돼요. 구글 시트에 연결하면 여러 사람이 같은 데이터를 쓸 수 있어요.</p>
+<label>웹 앱 URL<input id="c_url" placeholder="https://script.google.com/macros/s/.../exec"></label><label>비밀 키 (스크립트의 KEY와 같은 값)<input id="c_key"></label>
+<div class="ac"><span style="flex:1"></span><button id="cx2">취소</button><button id="sv2" class="p">저장</button></div></dialog>
+<dialog id="dlg"><h3 id="dt" style="margin:0 0 10px">제품</h3>
+<label>제품명<input id="f_n"></label><label>제품명(영문)<input id="f_en"></label><label>RP (책임자 회사명)<input id="f_rp" list="rpl" placeholder="비우면 CPNP 기준으로 자동 표시"></label><datalist id="rpl"><option value="트레이드"><option value="네모"><option value="YJN"><option value="CDRI"></datalist><label>제조사<input id="f_m" list="ml"></label><datalist id="ml"></datalist>
+<label>바코드<input id="f_b"></label><label>MoCRA 확인서 번호<input id="f_us"></label><label>CPNP 번호<input id="f_eu"></label><label>SCPN 번호<input id="f_uk"></label><label>비고<input id="f_note"></label>
+<div class="ac"><button id="del" class="d">삭제</button><span style="flex:1"></span><button id="cx">취소</button><button id="sv" class="p">저장</button></div></dialog>
+<div id="t">복사됨</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const M=["그린코스","나우코스","리봄화장품","믹스앤매치","사임당화장품","씨앤텍","에스알바이오텍","수한","지앤아이코스메틱","코디","유한코스메틱","한국콜마","화성코스메틱","한국화장품제조","이앤씨","코스메카코리아"];
+// 이름|제조사|바코드(8809 뒤)|MoCRA(53- 뒤)|CPNP|SCPN(UKCP- 뒤)
+const D=`에잇 티 클렌징 워터|0|567922402|076783-173622|5569259|70835677
+에잇 티 시카밍 세럼|0|721242681|911755-711645|5566515|15284963
+원더 아이래쉬 세럼|1|721243305|743370-868740|4520879|96480947
+굿바이 메이크업 클렌징 오일|1|721244302|559824-183380|4970130|72708870
+펩타이드 파워 앰플|1|721242872|710298-368218|4980070|28613902
+펩타이드 파워 크림|1|721244401|179454-091382|4970249|97778503
+펩타이드 파워 아이크림|1|721244296|278872-137872|4970260|10011514
+펩타이드 파워 나이트슬리핑 마스크|1|721244418|039768-062608|4970287|68854655
+펩타이드 파워 토너|1|721244395|991388-524564|4970290|58106069
+라이트 온 인 샤워 바디 톤업|2|721242827|398529-486046|5568228|03270040
+라이트 온 톤업 크림|2|326333807|021743-289692||
+원더프루프 젤 슬림 아이라이너 #01 미드나잇 블랙|3|721243206|407984-585017|4520886|22709460
+원더프루프 젤 슬림 아이라이너 #03 딥 브라운|3|721243220|494786-574967|4520887|03509030
+원더프루프 젤 슬림 아이라이너 #04 클래식 브라운|3|721243237|379369-788910|4520890|67504314
+저스트 원 인진쑥 세럼|4|721242841|359835-300063|4970151|02552037
+저스트 원 어성초 세럼|4|721242858|173134-754174|4970165|71400558
+에잇 티 립 앤 아이 리무버 패드|5|541198816|070641-404049|4249552|
+허니 앤 밀크 시카듈라 마스크|5|721243183|132805-712728|5568248|61942982
+허니 앤 밀크 비타민 마스크|5|721243190|330616-531798|5568268|78266367
+허니 앤 밀크 워터 마스크|5|721243176|780370-272553|5568282|95984544
+저스트 원 인진쑥 추출물|6|721242636|557525-706592|5568293|59577981
+저스트 원 편백잎 추출물|6|721242735|096941-714172|5566153|36157538
+저스트 원 감꼭지 추출물|6|721242759|404486-756131|5568303|66519860
+저스트 원 어성초 추출물|6|721242629|102781-220046|5568310|19111581
+저스트 원 소엽잎 추출물|6|721242742|009883-468286|5568318|85307381
+원더프루프 펜 아이라이너 01 원더 블랙|7|464541744|872157-226804|4520880|24031424
+원더프루프 펜 아이라이너 02 원더 브라운|7|464541751|847811-374097|4520882|
+원더프루프 펜 아이라이너 03 소프트 브라운|7|721240014|152903-598745|4520885|
+3in1 트리플 엣지 아이브로우 01 그레이 브라운|8|491943146|798657-433855||
+3in1 트리플 엣지 아이브로우 02 다크 브라운|8|491943153|461271-509845||
+3in1 트리플 엣지 아이브로우 03 초코 브라운|8|491943160|923017-237155||
+클라우드 블러 립스틱 #01 비터 로즈|8|721244180|070530-665636|4979981|44765897
+클라우드 블러 립스틱 #02 스모크드 코랄|8|721244197|571703-841255|4980000|90486668
+클라우드 블러 립스틱 #03 브라이트 로즈|8|721244203|465720-370797|4980029|50401597
+클라우드 블러 립스틱 #04 멜로우펌킨|8|721244210|566944-968569|4980045|62441284
+클라우드 블러 립스틱 #05 위스키브라운|8|721244227|144840-003158|4980058|97159738
+듀이 립밤 #01 퓨어 바닐라|8|491943061|805285-576896|5611778|93210441
+듀이 립밤 #02 퓨어 레드|8|491943078|587084-434339|5611838|67517858
+듀이 립밤 #03 퓨어 핑크|8|491943085|887125-109021|5611860|80701816
+듀이 립밤 #04 퓨어 코랄|8|491944310|528552-244402|5611868|69975925
+듀이 립밤 #05 퓨어 체리|8|721244326|732083-944955|4970519|93106705
+듀이 립밤 #06 퓨어 로즈|8|721244333|362524-477980|4970545|75663453
+듀이 립밤 #07 퓨어 칠리|8|721244340|907322-030274|4970578|38875104
+매트 홀릭 틴트 H RD 102 뱀파이어 레드|8|491943139|448900-729830||
+매트 홀릭 틴트 H RD 103 메이플 레드|8|721243336|301916-144376||
+매트 홀릭 틴트 H BG 501 빈티지 브릭|8|491943122|259963-891920||
+매트 홀릭 틴트 H BG 502 선셋 브라운|8|721243329|O (번호 없음)||
+매트 홀릭 틴트 H BG 503 시나몬 베이지|8|721243442|O (번호 없음)||
+원더프루프 마스카라 롱앤컬 #01 슈퍼 블랙|8|491943962|975274-677862|4855647|25185363
+원더프루프 마스카라 롱앤컬 #02 슈퍼 브라운|8|721242698|038295-781431|4855648|35957188
+마이 립스틱 #802 마이 체리 레드|8|491940473|536113-585341|4971783|41283988
+마이 립스틱 #803 마이 오렌지|8|491940480|813830-964240|4971793|03794486
+마이 립스틱 #804 마이 코랄|8|491940497|O (번호 없음)|4971801|64136763
+마이 립스틱 #805 마이 라이트 코랄|8|491940503|266957-931101|4971810|72764892
+마이 립스틱 #806 마이 로즈|8|491940510|589517-398366|4971817|03647182
+마이 립스틱 #808 마이 웜 레드|8|721242773|317229-385043|4971822|31642468
+마이 립스틱 #809 마이 칠리 레드|8|721242780|617616-040957|4971827|82877036
+마이 립스틱 #810 마이 브릭 레드|8|721242797|899749-868008|4971837|94031735
+오엠지 매트 립 라커 #01 엘오티디|8|491944365|971264-730787||
+오엠지 매트 립 라커 #02 비에프에프|8|491944372|466671-166729||
+오엠지 매트 립 라커 #03 엘오엘|8|491944389|501964-983530||
+오엠지 매트 립 라커 #04 티엠아이|8|491944396|649142-962046||
+오엠지 매트 립 라커 #05 에프포에프|8|491944402|620950-841416||
+오엠지 매트 립 라커 #06 엑스오엑스오|8|491944419|034115-862276||
+슈퍼 슬림 브로우 01 차콜 브라운|8|721243527|923082-796004|4520891|96493659
+슈퍼 슬림 브로우 02 리치 브라운|8|721243534|036820-881202|4520893|02290342
+슈퍼 슬림 브로우 03 토프 브라운|8|721243541|687229-122861|4520894|80282731
+원더프루프 마스카라 볼륨 & 컬 #01 딥 블랙|8|721243459|380199-280324|4855650|42857404
+베이스 온 베이직 아이 팔레트 01 코랄리즘|9|721242612|O (번호 없음)||
+에잇 티 워터 캡슐 크림|10|721242551|196893-204096|5568324|88509439
+에잇 티 클렌징 폼|10|587524419|725849-202546|5568359|01342131
+에잇 티 로션|10|587524402|545304-308965|5569334|48758656
+에잇 티 토너|10|390126329|302913-344299|5569349|07953782
+픽싱 플렉스 파우더 팩트|11|721243312|595302-897055|4839354|50522726
+펄 파티 아이 글리터 01 미러볼|12|235978601|728925-408067|4520907|58827857
+펄 파티 아이 글리터 02 스파클링 샴페인|12|235978618|412035-303520|4520934|84935027
+에잇티 아쿠아 클렌징워터|0|721244647|578214-901918|4970115|56343619
+커버플렉스 리퀴드 컨실러 #21라이트|13|721244678|844787-809645|5126330|95493835
+커버플렉스 리퀴드 컨실러 #23 내추럴|13|721244685|137095-591920|5126339|80202603
+무드 플렉스 파우더 블러쉬 01 웜 핑크|11|721244708|693237-640041|5126380|44300492
+무드 플렉스 파우더 블러쉬 02 베이지 로즈|11|721244715|403601-401401|5126397|94675170
+메이크업 핏 프라이머|1|721244364|930708-956184|5126357|06019329
+피오니 가든 퍼퓸 바디 로션|0|721244838|767344-616572|5379253|76974840
+쁘띠 피그 퍼퓸 바디 로션|0|721244845|791265-808867|5379348|00101287
+쉬폰 바닐라 퍼퓸 바디 로션|0|721244852|305058-152562|5379379|94743640
+피오니 가든 퍼퓸 바디 미스트|0|721244869|164947-022033|5379442|07088030
+쁘띠 피그 퍼퓸 바디 미스트|0|721244876|396620-428771|5379492|53042943
+쉬폰 바닐라 퍼퓸 바디 미스트|0|721244883|693724-097209|5379497|54879991
+피치 히아 블렌드 수분 마스크|14|721245309|871880-287983|5379524|65326589
+시카 테놀 블렌드 진정 마스크|14|721245316|793042-453542|5379543|02108728
+레몬 비타 블렌드 브라이트닝 마스크|14|721245323|077765-145262|5379548|29377748
+히알루론산 수분 토너|15|721244944|890275-672177|5379553|07383594
+히알루론산 수분 세럼|15|721244951|409275-625883|5379556|17037123
+히알루론산 수분 크림|15|721244968|975696-881782|5379564|77788274
+커버 플렉스 쿠션 #25N 미디엄|0|721244159||5143300|21862938
+파데프리 톤 커버 선크림|1|721244319||5143347|54494317
+커버플렉스 비비크림 01 클래식|13|721244982||5776149|18195919
+커버플렉스 비비크림 02 아이보리|13|721244999||5776162|68096474
+커버플렉스 비비크림 03 베이지|13|721245002||5776168|36089767
+워터밤 선스틱|11|721243466||4772399|20539195
+커버 플렉스 쿠션 #21N 아이보리|0|721243251||5569360|87923595
+커버 플렉스 쿠션 #23N 베이지|0|721243268||5569368|64571005
+에이씨 레드 프리 클렌징 폼|1|721242889||5569374|77005316
+에잇 티 퀵 부스팅 마스크|5|721242803|151991-485878|5569380|55535348
+컨투어 플렉스 셰이딩 01 웜 셰이드|11|721245743|556141-469995|5721391|42982644
+컨투어 플렉스 셰이딩 02 쿨 셰이드|11|721245750|025219-338269|5721402|34766772
+원더프루프 마스카라 슬림 01 하이퍼 블랙|8|721245811|848651-301392|5776134|83899467
+워터글로우 선세럼|11|721244975||5776144|33531640
+커버플렉스 비비크림 04 미디엄|13|721246009||5773711|04136031
+커버플렉스 비비크림 05 모카|13|721246016||5773716|33686288
+펩타이드 파워 골드 앰플 마스크|14|721245781|999124-560935|5773725|23724108
+이븐 핏 커버 쿠션 13C 페어|15|721246023|883170-306474|5775460|60063246
+이븐 핏 커버 쿠션 19N 바닐라|15|721246030|317233-731726|5775480|74082406
+이븐 핏 커버 쿠션 21N 아이보리|15|721246047|681654-793627|5775496|79936779
+이븐 핏 커버 쿠션 23N 베이지|15|721246054|581424-284437|5775500|34528760
+이븐 핏 커버 쿠션 25N 미디엄|15|721246061|587528-044764|5775522|70968973
+이븐 핏 커버 쿠션 27N 모카|15|721246078|434788-345503|5775665|00886825
+이븐 핏 커버 쿠션 43N 시나몬|15|721246085|731267-039149|5775678|86335458
+이븐 핏 커버 쿠션 51N 코코아|15|721246092|558853-569704|5775686|00340220
+립 플래시 틴트 01 피그 블링크|8|721245927|188396-225588|5775808|64076470
+립 플래시 틴트 02 피치 플레어|8|721245934|390945-416263|5775839|27269668
+립 플래시 틴트 03 애프리콧 글림|8|721245941|425283-851847|5775846|39226993
+립 플래시 틴트 04 모브 미스트|8|721245958|265505-741332|5775869|51688393
+립 플래시 틴트 05 플럼 헤이즈|8|721245965|883296-963376|5775877|88767702
+스네일 뮤신 파워 토너|11|721245859|407720-497125|5830667|15556424
+스네일 뮤신 파워 앰플|11|721245873|446940-138393|5830670|84265686
+스네일 뮤신 파워 크림|11|721245866|907194-476486|5830672|77444769`.split("\n").map(l=>{const a=l.split("|");return{n:a[0],m:+a[1],b:"8809"+a[2],us:a[3]&&(/^\d/.test(a[3])?"53-"+a[3]:a[3]),eu:a[4],uk:a[5]&&"UKCP-"+a[5]}});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ENS={"567922402":"B.O.M EIGHT TEA CLEANSING WATER","721242681":"B.O.M EIGHT TEA CICAMING SERUM","721243305":"B.O.M WONDER EYELASH SERUM","721244302":"B.O.M GOOD BYE MAKE UP CLEANSING OIL","721242872":"B.O.M PEPTIDE POWER AMPOULE","721244401":"B.O.M PEPTIDE POWER CREAM","721244296":"B.O.M PEPTIDE POWER EYE CREAM","721244418":"B.O.M PEPTIDE POWER NIGHT SLEEPING MASK","721244395":"B.O.M PEPTIDE POWER TONER","721242827":"B.O.M LIGHT ON IN SHOWER BODY TONE UP","326333807":"B.O.M LIGHT ON TONE UP CREAM","721243206":"B.O.M WONDERPROOF GEL SLIM EYELINER #01 MIDNIGHT BLACK","721243220":"B.O.M WONDERPROOF GEL SLIM EYELINER #03 DEEP BROWN","721243237":"B.O.M WONDERPROOF GEL SLIM EYELINER #04 CLASSIC BROWN","721242841":"B.O.M JUST ONE ARTEMISIA CAPILLARIS SERUM","721242858":"B.O.M JUST ONE HOUTTUYNIA CORDATA SERUM","541198816":"B.O.M EIGHT TEA Lip and Eye Remover Pad","721243183":"B.O.M HONEY AND MILK CICADULA MASK","721243190":"B.O.M HONEY AND MILK VITAMIN MASK","721243176":"B.O.M HONEY AND MILK WATER MASK","721242636":"B.O.M JUST ONE ARTEMISIA CAPILLARIS EXTRACT","721242735":"B.O.M JUST ONE CHAMAECYPARIS OBTUSA LEAF EXTRACT","721242759":"B.O.M JUST ONE DIOSPYROS KAKI CALYX EXTRACT","721242629":"B.O.M JUST ONE HOUTTUYNIA CORDATA EXTRACT","721242742":"B.O.M JUST ONE PERILLA FRUTESCENS LEAF EXTRACT","464541744":"B.O.M WONDERPROOF PEN EYE LINER #01 WONDER BLACK","464541751":"B.O.M WONDERPROOF PEN EYE LINER #02 WONDER BROWN","721240014":"B.O.M WONDERPROOF PEN EYE LINER #03 SOFT BROWN","491943146":"B.O.M 3IN1 TRIPLE EDGE EYEBROW #01 GRAY BROWN","491943153":"B.O.M 3IN1 TRIPLE EDGE EYEBROW #02 DARK BROWN","491943160":"B.O.M 3IN1 TRIPLE EDGE EYEBROW #03 CHOCO BROWN","721244180":"B.O.M CLOUD BLUR LIPSTICK_#01 BITTER ROSE","721244197":"B.O.M CLOUD BLUR LIPSTICK_#02 SMOKED CORAL","721244203":"B.O.M CLOUD BLUR LIPSTICK_#03 BRIGHT ROSE","721244210":"B.O.M CLOUD BLUR LIPSTICK_#04 MELLOW PUMPKIN","721244227":"B.O.M CLOUD BLUR LIPSTICK_#05 WHISKY BROWN","491943061":"B.O.M DEWY LIP BALM #01 PURE VANILLA","491943078":"B.O.M DEWY LIP BALM #02 PURE RED","491943085":"B.O.M DEWY LIP BALM #03 PURE PINK","491944310":"B.O.M DEWY LIP BALM #04 PURE CORAL","721244326":"B.O.M DEWY LIP BALM #05 PURE CHERRY","721244333":"B.O.M DEWY LIP BALM #06 PURE ROSE","721244340":"B.O.M DEWY LIP BALM #07 PURE CHILI","491943139":"B.O.M MATT HOLIC TINT H RD 102 VAMPIRE RED","721243336":"B.O.M MATT HOLIC TINT H RD 103 MAPLE RED","491943122":"B.O.M MATT HOLIC TINT H BG 501 VINTAGE BRICK","721243329":"B.O.M MATT HOLIC TINT H BG 502 SUNSET BROWN","721243442":"B.O.M MATT HOLIC TINT H BG 503 CINNAMON BEIGE","491943962":"B.O.M WONDERPROOF MASCARA LONG & CURL #01 SUPER BLACK","721242698":"B.O.M WONDERPROOF MASCARA LONG & CURL #02 SUPER BROWN","491940473":"B.O.M MY LIPSTICK #802 MY CHERRY RED","491940480":"B.O.M MY LIPSTICK #803 MY ORANGE","491940497":"B.O.M MY LIPSTICK #804 MY CORAL","491940503":"B.O.M MY LIPSTICK #805 MY LIGHT CORAL","491940510":"B.O.M MY LIPSTICK #806 MY ROSE","721242773":"B.O.M MY LIPSTICK #808 MY WARM RED","721242780":"B.O.M MY LIPSTICK #809 MY CHILI RED","721242797":"B.O.M MY LIPSTICK #810 MY BRICK RED","491944365":"B.O.M OMG MATT LIP LACQUER #01 LOTD","491944372":"B.O.M OMG MATT LIP LACQUER #02 BFF","491944389":"B.O.M OMG MATT LIP LACQUER #03 LoL","491944396":"B.O.M OMG MATT LIP LACQUER #04 TMI","491944402":"B.O.M OMG MATT LIP LACQUER #05 F4F","491944419":"B.O.M OMG MATT LIP LACQUER #06 XOXO","721243527":"B.O.M SUPER SLIM BROW PENCIL #01 CHARCOAL BROWN","721243534":"B.O.M SUPER SLIM BROW PENCIL #02 RICH BROWN","721243541":"B.O.M SUPER SLIM BROW PENCIL #03 TAUPE BROWN","721243459":"B.O.M WONDERPROOF MASCARA VOLUME & CURL #01 DEEP BLACK","721242612":"B.O.M BASE ON BASIC EYE PALETTE 01 Coralism","721242551":"B.O.M EIGHT TEA WATER CAPSULE CREAM","587524419":"B.O.M EIGHT TEA CLEANSING FOAM","587524402":"B.O.M EIGHT TEA LOTION","390126329":"B.O.M EIGHT TEA TONER","721243312":"B.O.M FIXING FLEX POWDER PACT","235978601":"B.O.M PEARL PARTY EYE GLITTER #01 MIRRORBALL","235978618":"B.O.M PEARL PARTY EYE GLITTER #02 SPARKLING CHAMPAGNE","721244647":"B.O.M EIGHT TEA AQUA CLEANSING WATER","721244678":"B.O.M COVER FLEX LIQUID CONCEALER #21 LIGHT","721244685":"B.O.M COVER FLEX LIQUID CONCEALER #23 NATURAL","721244708":"B.O.M MOOD FLEX POWDER BLUSH 01 WARM PINK","721244715":"B.O.M MOOD FLEX POWDER BLUSH 02 BEIGE ROSE","721244364":"B.O.M MAKE UP FIT PRIMER","721244838":"B.O.M Peony Garden Perfume Body Lotion","721244845":"B.O.M Petit Fig Perfume Body Lotion","721244852":"B.O.M Chiffon Vanilla Perfume Body Lotion","721244869":"B.O.M Peony Garden Perfume Body Mist","721244876":"B.O.M Petit Fig Perfume Body Mist","721244883":"B.O.M Chiffon Vanilla Perfume Body Mist","721245309":"B.O.M Peach Hya Blend Moisturizing Mask","721245316":"B.O.M Cica Thenol Blend Calming Mask","721245323":"B.O.M Lemon Vita Blend Brightening Mask","721244944":"B.O.M Hyaluronic Acid Moisture Toner","721244951":"B.O.M Hyaluronic Acid Moisture Serum","721244968":"B.O.M Hyaluronic Acid Moisture Cream","721244159":"B.O.M COVER FLEX CUSHION SPF50+ PA+++ #25N MEDIUM","721244319":"B.O.M FOUNDATION-FREE TONE COVER SUN CREAM SPF50+PA++++","721244982":"B.O.M COVER FLEX BB CREAM SPF50+PA++++ 01 CLASSIC","721244999":"B.O.M COVER FLEX BB CREAM SPF50+PA++++ 02 IVORY","721245002":"B.O.M COVER FLEX BB CREAM SPF50+PA++++ 03 BEIGE","721243466":"B.O.M WATER BOMB SUN STICK SPF50+PA++++","721243251":"B.O.M COVER FLEX CUSHION SPF50+ PA+++ #21N IVORY","721243268":"B.O.M COVER FLEX CUSHION SPF50+ PA+++ #23N BEIGE","721242889":"B.O.M AC RED FREE CLEANSING FOAM","721242803":"B.O.M EIGHT TEA QUICK BOOSTING MASK","721245743":"B.O.M CONTOUR FLEX SHADING 01 WARM SHADE","721245750":"B.O.M CONTOUR FLEX SHADING 02 COOL SHADE","721245811":"B.O.M WONDERPROOF MASCARA SLIM 01 HYPER BLACK","721244975":"B.O.M WATER GLOW SUN SERUM SPF50+PA++++","721246009":"B.O.M COVER FLEX BB CREAM SPF50+PA++++ 04 MEDIUM","721246016":"B.O.M COVER FLEX BB CREAM SPF50+PA++++ 05 MOCHA","721245781":"B.O.M PEPTIDE POWER GOLD AMPOULE MASK","721246023":"B.O.M EVEN FIT COVER CUSHION 13C FAIR","721246030":"B.O.M EVEN FIT COVER CUSHION 19N VANILLA","721246047":"B.O.M EVEN FIT COVER CUSHION 21N IVORY","721246054":"B.O.M EVEN FIT COVER CUSHION 23N BEIGE","721246061":"B.O.M EVEN FIT COVER CUSHION 25N MEDIUM","721246078":"B.O.M EVEN FIT COVER CUSHION 27N MOCHA","721246085":"B.O.M EVEN FIT COVER CUSHION 43N CINNAMON","721246092":"B.O.M EVEN FIT COVER CUSHION 51N COCOA","721245927":"B.O.M LIP FLASH TINT 01 Fig Blink","721245934":"B.O.M LIP FLASH TINT 02 Peach Flare","721245941":"B.O.M LIP FLASH TINT 03 Apricot Gleam","721245958":"B.O.M LIP FLASH TINT 04 Mauve Mist","721245965":"B.O.M LIP FLASH TINT 05 Plum Haze","721245859":"B.O.M SNAIL MUCIN POWER TONER","721245873":"B.O.M SNAIL MUCIN POWER AMPOULE","721245866":"B.O.M SNAIL MUCIN POWER CREAM"};const ENF=b=>ENS[(b||"").slice(4)]||"";const en_=d=>d.en||ENF(d.b);
+const RPM={"4520879":"네모","4520886":"네모","4520887":"네모","4520890":"네모","4520880":"네모","4520882":"네모","4520885":"네모","4855647":"네모","4855648":"네모","4520891":"네모","4520893":"네모","4520894":"네모","4855650":"네모","4839354":"네모","4520907":"네모","4520934":"네모","4772399":"네모","4249552":"YJN","5830667":"CDRI","5830670":"CDRI","5830672":"CDRI"};
+const rp_=d=>d.rp||RPM[d.eu]||(/^\d{7}$/.test(d.eu||"")?"트레이드":"");
+const RPN={"트레이드":"Tradegate to Europe, SL. (스페인)","네모":"NEMO GmbH (독일)","YJN":"YJN EUROPE s.r.o. (슬로바키아)","CDRI":"CDRI GERMANY GmbH (독일) / CDRIUK Ltd (영국)"},RC={"트레이드":"#3b5bdb","네모":"#2f9e44","YJN":"#e8590c","CDRI":"#9c36b5"};
+const rpb=d=>{const r=rp_(d),c=RC[r]||"#6b7385";return r?`<span class="tg" style="cursor:pointer;background:${c}22;color:${c}" data-e="${esc(d.id)}" data-f="rp" title="클릭해서 수정">${esc(r)}</span>${RPN[r]?`<div class="m">${esc(RPN[r])}</div>`:""}`:`<span class="tg off" style="cursor:pointer" data-e="${esc(d.id)}" data-f="rp">＋ 입력</span>`};
+const seed=D.map(d=>({n:"비오엠 "+d.n,m:M[d.m],en:ENF(d.b),b:d.b,us:d.us||"",eu:d.eu||"",uk:d.uk||"",note:""}));
+let items=[],ro=false,loaded=false,editId=null,pend=null;
+const toast=m=>{const t=$("t");t.textContent=m;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,1500)};
+const cell=v=>v?(/^O /.test(v)?`<span class="m">${esc(v)}</span>`:`<span class="c" data-v="${esc(v)}">${esc(v)}</span>`):'<span class="no">—</span>';
+function r(){const q=$("q").value.trim().toLowerCase(),f=$("f").value,g=$("g").value;
+const ms=[...new Set(items.map(d=>d.m).filter(Boolean))].sort();
+$("f").innerHTML='<option value="">전체 제조사</option>'+ms.map(x=>`<option${x==f?" selected":""}>${esc(x)}</option>`).join("");
+$("ml").innerHTML=ms.map(x=>`<option value="${esc(x)}">`).join("");
+const L=items.filter(d=>(!f||d.m==f)&&(g===""||(g=="x"&&!d.eu)||(g=="u"&&!d.uk)||(g=="m"&&!d.us)||(g.startsWith("a_")&&!has(d.id,g.slice(2)))||(g.startsWith("rp_")&&rp_(d)==g.slice(3)))&&(!q||[d.n,en_(d),rp_(d),d.m,d.b,d.us,d.eu,d.uk,d.note].join(" ").toLowerCase().includes(q))).sort((a,b)=>(a.n||"").localeCompare(b.n||"","ko"));
+$("cnt").textContent=loaded?`${L.length}개 제품 (전체 ${items.length})`:"불러오는 중…";
+$("b").innerHTML=L.map(d=>`<tr><td class="n">${esc(d.n)}${en_(d)?`<div class="m">${esc(en_(d))}</div>`:""}${d.note?`<div class="m">${esc(d.note)}</div>`:""}</td><td class="m">${esc(d.m)}</td><td>${rpb(d)}</td><td>${cell(d.b)}</td><td>${cell(d.us)}${att(d.id,d.n,"MoCRA")}</td><td>${cell(d.eu)}${att(d.id,d.n,"CPNP")}</td><td>${cell(d.uk)}${att(d.id,d.n,"SCPN")}</td><td>${att(d.id,d.n,"MSDS")}</td><td>${att(d.id,d.n,"아트웍")}</td><td>${att(d.id,d.n,"CPSR")}</td><td>${att(d.id,d.n,"US SSR")}</td><td>${ro?"":`<button class="e" data-e="${esc(d.id)}">수정</button>`}</td></tr>`).join("");
+$("add").hidden=$("up").hidden=ro;try{mf()}catch(e){}try{rpv()}catch(e){}
+if(!pend){$("bn").innerHTML=(loaded&&!ro&&!items.length)?'저장된 제품이 없어요. <button id="sd" class="p">기본 데이터 127개 불러오기</button>':(ro?"읽기 전용 화면입니다 (저장 기능을 쓸 수 없는 환경)":"")}}
+["q","f","g"].forEach(i=>$(i).addEventListener("input",r));
+document.addEventListener("click",async e=>{const T=e.target;
+ const V=T.closest&&T.closest("[data-v]");if(V)cp(V.dataset.v);
+ if(T.dataset&&T.dataset.e){openD(T.dataset.e);if(T.dataset.f=="rp")setTimeout(()=>$("f_rp").focus(),50)}
+ if(T.dataset&&T.dataset.a)openF(T.dataset.a,T.dataset.n,T.dataset.k);
+ if(T.dataset&&T.dataset.r)document.querySelector("nav [data-t=r]").click();
+ if(T.dataset&&T.dataset.rf){document.querySelector("nav [data-t=p]").click();$("g").value="rp_"+T.dataset.rf;r()}
+ if(T.dataset&&T.dataset.dl){try{await dlFile(T.dataset.dl)}catch(x){toast("다운로드 실패")}}
+ if(T.dataset&&T.dataset.rm){if(T.dataset.c!="1"){T.dataset.c="1";T.textContent="한 번 더";return}try{await delFile(T.dataset.rm);await load();fr()}catch(x){toast("삭제 실패")}}
+ if(T.id=="sd"){T.disabled=true;try{await put(seed.map((x,i)=>({...x,id:"p"+String(i).padStart(3,"0")})));toast("불러왔어요")}catch(x){toast("실패: 권한을 확인하세요")}}
+ if(T.id=="ok")applyImp();if(T.id=="no"){pend=null;r()}});
+function cp(v){const ok=()=>toast("복사됨");const fb=()=>{const a=document.createElement("textarea");a.value=v;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();let g=false;try{g=document.execCommand("copy")}catch(e){}a.remove();g?ok():toast("복사 실패 · 직접 선택해서 복사해 주세요")};
+if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(v).then(ok,fb);else fb()}
+const F=["n","en","rp","m","b","us","eu","uk","note"];
+function openD(id){editId=id;const d=items.find(x=>x.id==id)||{};F.forEach(k=>$("f_"+k).value=(k=="en"?en_(d):d[k])||"");$("dt").textContent=id?"제품 수정":"제품 추가";$("del").hidden=!id;$("dlg").showModal()}
+$("add").onclick=()=>openD(null);$("cx").onclick=()=>$("dlg").close();
+$("sv").onclick=async()=>{const o={};F.forEach(k=>o[k]=$("f_"+k).value.trim());if(!o.n){toast("제품명을 입력하세요");return}
+ try{editId?await col.doc(editId).set(o):await col.add(o);$("dlg").close();toast("저장됨")}catch(x){toast("저장 실패: 권한을 확인하세요")}};
+$("del").onclick=async()=>{if($("del").dataset.c!=editId){$("del").dataset.c=editId;$("del").textContent="한 번 더 누르면 삭제";return}
+ try{await col.doc(editId).delete();$("dlg").close();toast("삭제됨")}catch(x){toast("삭제 실패")}$("del").textContent="삭제";delete $("del").dataset.c};
+$("up").onclick=()=>$("file").click();
+$("file").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+ try{const buf=await f.arrayBuffer();const wb=/\.csv$/i.test(f.name)?XLSX.read(new TextDecoder("utf-8").decode(buf),{type:"string"}):XLSX.read(buf,{type:"array"});
+ const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
+ const pick=(row,re)=>{const k=Object.keys(row).find(k=>re.test(k.replace(/\s/g,"")));return k?String(row[k]).trim():""};
+ const ex=(v,re)=>{const m=v.match(re);return m?m[0]:(/^(O|o|ㅇ|-|)$/.test(v)?"":v)};
+ pend=rows.map(w=>({n:pick(w,/제품명.*국문|^제품명$/)||pick(w,/제품명/),en:pick(w,/제품명.*영문|영문/),rp:pick(w,/^rp/i),m:pick(w,/제조사/),b:pick(w,/바코드/),us:ex(pick(w,/MoCRA/i),/\d{2}-\d{6}-\d{6}/),eu:ex(pick(w,/CPNP/i),/\b\d{7}\b/),uk:ex(pick(w,/SCPN/i),/UKCP-\d{8}/),note:pick(w,/비고/)})).filter(x=>x.n);
+ if(!pend.length){pend=null;toast("제품명 열을 찾지 못했어요");return}
+ $("bn").innerHTML=`${pend.length}개 제품을 읽었어요. 바코드나 제품명이 같으면 빈칸이 아닌 값으로 덮어써요. <button id="ok" class="p">반영</button><button id="no">취소</button>`}catch(x){toast("파일을 읽지 못했어요")}};
+async function applyImp(){const P=pend;pend=null;$("bn").textContent="반영 중…";
+ try{const out=[],cur=items.slice();for(const x of P){const o=cur.find(d=>(x.b&&d.b==x.b)||d.n==x.n);const v={};F.forEach(k=>{if(x[k])v[k]=x[k]});
+  if(o){Object.assign(o,v);out.push(o)}else{const n={n:"",m:"",b:"",us:"",eu:"",uk:"",note:"",...v,id:uid()};cur.push(n);out.push(n)}}
+  await put(out);toast(out.length+"개 반영됨")}catch(e){toast("저장 실패: 설정을 확인하세요")}r()}
+const LS=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k)||"";v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){return ""}};
+let CFG={url:LS("bom_url"),key:LS("bom_key")};
+const uid=()=>"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const mode=()=>{$("md").textContent=CFG.url?"저장 위치: 구글 시트 (팀 공유)":"저장 위치: 이 브라우저 (이 컴퓨터에서만 보임) · ⚙ 저장 설정에서 구글 시트 연결 가능"};
+async function rpc(b){const res=await fetch(CFG.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...b,key:CFG.key})});const j=await res.json();if(j.error)throw new Error(j.error);return j}
+const idb=()=>new Promise((ok,no)=>{const q=indexedDB.open("bomdb",1);q.onupgradeneeded=()=>{q.result.createObjectStore("meta",{keyPath:"id"});q.result.createObjectStore("blobs")};q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
+const tx=async(st,mode,fn)=>{const d=await idb();return new Promise((ok,no)=>{const t=d.transaction(st,mode);const q=fn(t);t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})};
+let fl=[],fo=null,fcat="";
+const fc=id=>fl.filter(x=>x.owner==id).length;
+const CATS=["MSDS","아트웍","CPNP","SCPN","MoCRA","CPSR","US SSR","GMP","ISO","기타"],LBL={"CPSR":"CPSR (EU)","US SSR":"US Safety Substantiation Report"};
+const cnt=(id,c)=>fl.filter(x=>x.owner==id&&(x.cat||"기타")==c).length;
+const att=(id,n,c)=>{const L=fl.filter(x=>x.owner==id&&(x.cat||"기타")==c),d=`data-a="${esc(id)}" data-n="${esc(n)}" data-k="${c}"`;
+ if(!L.length)return `<div><button class="e" ${d}>＋ 첨부</button></div>`;
+ if(L.length==1)return `<div><button class="e on" data-dl="${esc(L[0].id)}" title="${esc(L[0].name)}">📄 열기</button><button class="e" ${d} title="추가·삭제">＋</button></div>`;
+ return `<div><button class="e on" ${d}>📄 ${L.length}개 보기</button></div>`};
+const has=(id,c)=>fl.some(x=>x.owner==id&&x.cat==c);
+const detect=n=>/msds|\bsds\b/i.test(n)?"MSDS":/artwork|아트웍|아트워크|\.(ai|psd|eps)$/i.test(n)?"아트웍":/cpnp/i.test(n)?"CPNP":/scpn|ukcp/i.test(n)?"SCPN":/mocra/i.test(n)?"MoCRA":/gmp/i.test(n)?"GMP":/iso/i.test(n)?"ISO":"기타";
+const abtn=(id,n,prod)=>`<button class="e" data-a="${esc(id)}" data-n="${esc(n)}">📎 ${fc(id)||""}</button><div>${(prod?MAIN:["GMP","ISO"]).map(c=>`<span class="tg${has(id,c)?"":" off"}">${c}</span>`).join("")}</div>`;
+const sz=n=>n>1e9?(n/1e9).toFixed(1)+"GB":n>1e6?(n/1e6).toFixed(1)+"MB":Math.max(1,Math.round(n/1e3))+"KB";
+async function load(){let list;if(CFG.url){const res=await fetch(CFG.url+"?action=list&key="+encodeURIComponent(CFG.key));const j=await res.json();if(j.error)throw new Error(j.error);list=j.items;fl=j.files||[]}else{try{list=JSON.parse(localStorage.getItem("bom_items")||"[]")}catch(e){list=[]}try{fl=(await tx("meta","readonly",t=>t.objectStore("meta").getAll()))||[]}catch(e){fl=[]}}items=list;loaded=true;r();usage()}
+async function usage(){const tot=fl.reduce((a,x)=>a+(x.type=="link"?0:x.size||0),0);let t=(CFG.url?"저장 위치: 구글 시트·드라이브":"저장 위치: 이 브라우저")+` · 첨부 ${fl.length}개 (${sz(tot)})`;
+ if(!CFG.url&&navigator.storage&&navigator.storage.estimate){try{const e=await navigator.storage.estimate();if(e.quota)t+=` · 브라우저 저장 한도 약 ${sz(e.quota)} 중 ${sz(e.usage||0)} 사용`}catch(x){}}
+ $("md").textContent=t+(CFG.url?"":" · ⚙ 저장 설정에서 구글 시트 연결 가능")}
+function fr(){const L=fl.filter(x=>x.owner==fo&&(x.cat||"기타")==fcat).sort((a,b)=>CATS.indexOf(a.cat||"기타")-CATS.indexOf(b.cat||"기타"));$("fl2").innerHTML=L.length?L.map(x=>`<div class="fr"><span class="fn">${esc(x.name)} <span class="m">${x.type=="link"?"링크":sz(x.size)}</span></span><button class="e" data-dl="${esc(x.id)}">${x.type=="link"||viewable(x)?"열기":"다운로드"}</button><button class="e d" data-rm="${esc(x.id)}">삭제</button></div>`).join(""):'<p class="m">첨부된 파일이 없어요.</p>'}
+function openF(o,n,c){fo=o;fcat=c;$("ft").textContent=(LBL[c]||c)+" 첨부 · "+n;fr();$("fd").showModal()}
+$("fx").onclick=()=>$("fd").close();
+const b64=f=>new Promise((ok,no)=>{const x=new FileReader();x.onload=()=>ok(x.result.split(",")[1]);x.onerror=no;x.readAsDataURL(f)});
+async function addFile(o,f){const m={id:uid(),owner:o,name:f.name,size:f.size,type:f.type,ts:Date.now(),cat:fcat};
+ if(CFG.url)await rpc({action:"upload",...m,data:await b64(f)});else await tx(["meta","blobs"],"readwrite",t=>{t.objectStore("meta").put(m);t.objectStore("blobs").put(f,m.id)})}
+async function getFile(id){if(CFG.url){const j=await rpc({action:"getfile",id});const bin=atob(j.data),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return{name:j.name,blob:new Blob([u],{type:j.type})}}
+ const m=fl.find(x=>x.id==id);const bl=await tx("blobs","readonly",t=>t.objectStore("blobs").get(id));return{name:m.name,blob:bl}}
+async function addLink(o,c,u){const m={id:uid(),owner:o,name:u,size:0,type:"link",url:u,ts:Date.now(),cat:c};
+ if(CFG.url)await rpc({action:"link",...m});else await tx("meta","readwrite",t=>{t.objectStore("meta").put(m)})}
+$("lb").onclick=async()=>{const u=$("lk").value.trim();if(!u)return;try{await addLink(fo,fcat,u);$("lk").value="";await load();fr();toast("추가됨")}catch(x){toast("추가 실패")}};
+async function delFile(id){if(CFG.url)await rpc({action:"delfile",id});else await tx(["meta","blobs"],"readwrite",t=>{t.objectStore("meta").delete(id);t.objectStore("blobs").delete(id)})}
+const viewable=x=>/^(application\/pdf|image\/)/.test(x.type||"")||/\.(pdf|png|jpe?g|gif|webp)$/i.test(x.name||"");
+async function dlFile(id){const m=fl.find(x=>x.id==id);if(m&&m.type=="link"){if(/^https?:/i.test(m.url))window.open(m.url,"_blank","noopener");else{cp(m.url);setTimeout(()=>toast("경로를 복사했어요 · 탐색기 주소창에 붙여넣으세요"),400)}return}
+ toast("준비 중…");const g=await getFile(id);let bl=g.blob;if(m&&viewable(m)){if(!bl.type&&/\.pdf$/i.test(g.name))bl=new Blob([bl],{type:"application/pdf"});const u=URL.createObjectURL(bl);const w=window.open(u,"_blank");setTimeout(()=>URL.revokeObjectURL(u),60000);if(w)return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=g.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
+$("fi").onchange=async e=>{const L=[...e.target.files];e.target.value="";let n=0;
+ for(const f of L){if(f.size>25e6){toast(f.name+": 25MB 초과");continue}try{await addFile(fo,f);n++}catch(x){toast("업로드 실패: "+f.name)}}
+ if(n){await load();fr();toast(n+"개 업로드됨")}};
+async function put(list){if(CFG.url)await rpc({action:"bulk",items:list});else{const m=new Map(items.map(x=>[x.id,x]));list.forEach(x=>m.set(x.id,x));localStorage.setItem("bom_items",JSON.stringify([...m.values()]))}await load()}
+const col={doc:id=>({set:o=>put([{...o,id}]),delete:async()=>{if(CFG.url)await rpc({action:"delete",id});else localStorage.setItem("bom_items",JSON.stringify(items.filter(x=>x.id!=id)));await load()}}),add:o=>put([{...o,id:uid()}])};
+$("cg").onclick=()=>{$("c_url").value=CFG.url;$("c_key").value=CFG.key;$("cfg").showModal()};$("cx2").onclick=()=>$("cfg").close();
+$("sv2").onclick=async()=>{CFG={url:$("c_url").value.trim(),key:$("c_key").value.trim()};LS("bom_url",CFG.url||null);LS("bom_key",CFG.key||null);$("cfg").close();mode();loaded=false;items=[];r();try{await load()}catch(e){toast("연결 실패: 주소와 키를 확인하세요");loaded=true;r()}};
+mode();load().catch(()=>{toast("불러오기 실패: ⚙ 저장 설정을 확인하세요");loaded=true;r()});
+const MF=[["그린코스","64-30, Hagunsandan 1-ro, Yangchon-eup, Gimpo-si, Gyeonggi-do, Republic of Korea","26.02.06",""],
+["나우코스","37, Ayamok-gil, Sojeong-myeon, Sejong-si, Republic of Korea","26.05.12",""],
+["리봄화장품","6, Myeonghaksandanseo-ro, Yeondong-myeon, Sejong-si, Republic of Korea","25.12.29",""],
+["믹스앤매치","main building 2(part), main building 3, 14, Pyeongcheon-ro 73beon-gil, Bupyeong-gu, Incheon, Republic of Korea","25.07.22","검수 필요|건물 정보 포함 주소 변경본"],
+["지앤아이코스메틱","25, Gilju-ro 444beon-gil, Wonmi-gu, Bucheon-si, Gyeonggi-do, Republic of Korea","26.03.16",""],
+["한국콜마 (부천)","157, Pyeongcheon-ro 850beon-gil, Wonmi-gu, Bucheon-si, Gyeonggi-do, Republic of Korea","26.04.01",""],
+["한국콜마 (세종)","22-17, Sandan-gil, Jeonui-myeon, Sejong-si, Republic of Korea","26.04.01",""],
+["씨앤텍","30, Sandan-ro, Pyeongtaek-si, Gyeonggi-do, Republic of Korea","26.02.20",""],
+["에스알바이오텍","B101, B101-1~3, Sicox Tower, 484, Dunchon-daero, Jungwon-gu, Seongnam-si, Gyeonggi-do, Republic of Korea","25.12.09",""],
+["유한코스메틱","Buildings 1, 2, 3, 40-20 Gajangsaneopseobuk-ro, Osan-si, Gyeonggi-do, Republic of Korea","25.12.18","오산 공장 주소 (본사 아님)"],
+["코디 (화성공장)","45, Annyeom-gil 112beon-gil, Jeongnam-myeon, Hwaseong-si, Gyeonggi-do, Republic of Korea","26.02.26",""],
+["코스메카코리아","17-12, Daegeum-ro 196beon-gil, Daeso-eup, Eumseong-gun, Chungcheongbuk-do, Republic of Korea","26.07.02","검수 필요|대소면 → 대소읍 변경 반영"],
+["한국화장품제조","74, Daeseong-ro 547beon-gil, Samseong-myeon, Eumseong-gun, Chungcheongbuk-do, Republic of Korea","25.12.09",""],
+["이앤씨","ENC, 21, Deokseongsandan 2-ro 50beon-gil, Idong-eup, Cheoin-gu, Yongin-si, Gyeonggi-do, Republic of Korea","24.11.08",""],
+["사임당화장품","143, Yangcheongsongdae-gil, Ochang-eup, Cheongwon-gu, Cheongju-si, Chungcheongbuk-do","-","GMP 미수령|제조사 시트 기준"],
+["화성코스메틱","23, Hagunsandan 1-ro, Yangchon-eup, Gimpo-si, Gyeonggi-do, Korea","-","GMP 미수령|제조사 시트 기준"],
+["수한","17, Cheongyong 1-gil, Hoengseong-eup, Hoengseong-gun, Gang-won-do, Korea","-","GMP 미수령|제조사 시트 기준, 거래 종료 예정"]];
+function mf(){$("mb").innerHTML=MF.map(m=>{const s=m[3].split("|");return `<tr><td class="n">${esc(m[0])}</td><td><span class="c" style="white-space:normal" data-v="${esc(m[1])}">${esc(m[1])}</span></td><td>${esc(m[2])}</td><td class="m">${s[0]?`<b style="color:${/검수/.test(s[0])?"#d9480f":"inherit"}">${esc(s[0])}</b>`:"확인됨"}${s[1]?`<div>${esc(s[1])}</div>`:""}</td><td>${att("m:"+m[0],m[0],"GMP")}</td><td>${att("m:"+m[0],m[0],"ISO")}</td></tr>`}).join("")}mf();
+const RPD=[["트레이드","Tradegate to Europe, SL., Calle Albasanz 79, Nave 6 28037, Madrid, Spain","TRADEGATE TO UK LTD 71-75 Shelton Street, Covent Garden,","comunicacion@tradegate.es","UK 주소가 시트에 일부 잘려 있어요 (검수 필요)"],
+["네모","NEMO GmbH, Mergenthalerallee 77, 65760, Eschborn, Germany","","info@nemobrands.com · +49 1796126567","UK RP 정보는 시트에 없어요"],
+["YJN","YJN EUROPE s.r.o., Stefanikova 849 010 01 Zilina Slovakia","","jameskim@yjn.or.kr","UK RP 정보는 시트에 없어요"],
+["CDRI","CDRI GERMANY GmbH, Am Kronberger Hang 2, 65824 Schwalbach am Taunus, Germany","CDRIUK Ltd, V307 Vox Studios, 1-45 Durham Street, Vauxhall, London, SE11 5JH","eu.cs@cdri.pro / uk.cs@cdri.pro","라벨 공간이 작으면 축약 가능: EU RP: CDRI GERMANY GmbH, Am Kronberger Hang 2, 65824 Schwalbach, Germany / UK RP: CDRIUK Ltd, V307 Vox Studios, 1-45 Durham St, London SE11 5JH, UK"]];
+const cpv=v=>v?`<span class="c" style="white-space:normal" data-v="${esc(v)}">${esc(v)}</span>`:'<span class="no">—</span>';
+function rpv(){$("rb").innerHTML=RPD.map(x=>{const n=items.filter(d=>rp_(d)==x[0]).length;return `<tr><td class="n">${x[0]}</td><td>${cpv(x[1])}</td><td>${cpv(x[2])}</td><td class="m">${esc(x[3])}</td><td><span class="c" data-rf="${x[0]}">${n}개 보기</span></td><td class="m">${esc(x[4])}</td></tr>`}).join("")}
+document.querySelectorAll("nav [data-t]").forEach(b=>b.addEventListener("click",()=>{const t=b.dataset.t,p=t=="p";document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("p",x==b));$("mv").style.display=t=="m"?"":"none";$("rv").style.display=t=="r"?"":"none";document.querySelector(".bar").style.display=p?"":"none";$("bn").parentElement.style.display=p?"":"none";$("cnt").parentElement.style.display=p?"":"none"}));
+</script></body></html>
